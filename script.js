@@ -74,3 +74,76 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSmoothScroll();
     animateCounters();
 });
+//  campaign script
+document.addEventListener('DOMContentLoaded', () => {
+    const campaignForm = document.getElementById('campaign-form');
+
+    if (campaignForm) {
+        campaignForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Visual feedback
+            const btn = campaignForm.querySelector('button');
+            btn.innerText = "Sending...";
+            btn.style.opacity = "0.7";
+            btn.disabled = true;
+
+            setTimeout(() => {
+                alert("Your campaign proposal has been submitted! Our team will review it and contact you via email within 3-5 business days.");
+                campaignForm.reset();
+                btn.innerText = "Submit Proposal";
+                btn.style.opacity = "1";
+                btn.disabled = false;
+            }, 1500);
+        });
+    }
+});
+
+// community screipt
+
+document.addEventListener('DOMContentLoaded', () => {
+    const communityForm = document.getElementById('community-form');
+
+    if (communityForm) {
+        communityForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const submitBtn = communityForm.querySelector('button');
+            const originalText = submitBtn.innerText;
+            
+            // Animation for feedback
+            submitBtn.innerText = "Processing...";
+            submitBtn.style.background = "#219150";
+
+            setTimeout(() => {
+                alert("Welcome to the Compassion Project community! You'll receive your first impact update shortly.");
+                communityForm.reset();
+                submitBtn.innerText = originalText;
+                submitBtn.style.background = "#27ae60";
+            }, 1200);
+        });
+    }
+});
+
+// volunteer script
+document.addEventListener('DOMContentLoaded', () => {
+    const volForm = document.getElementById('volunteer-form-action');
+
+    if (volForm) {
+        volForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const submitBtn = volForm.querySelector('button');
+            submitBtn.innerText = "Submitting...";
+            submitBtn.disabled = true;
+
+            // Simulate server delay
+            setTimeout(() => {
+                alert("Application Sent! Our volunteer coordinator will reach out to you within 48 hours. Thank you for your heart to serve.");
+                volForm.reset();
+                submitBtn.innerText = "Send My Application";
+                submitBtn.disabled = false;
+            }, 1500);
+        });
+    }
+});
