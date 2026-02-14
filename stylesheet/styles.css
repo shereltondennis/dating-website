@@ -267,6 +267,18 @@ textarea {
     padding: 1rem;
 }
 
+.report-section {
+    padding: 0 0 3rem;
+}
+
+.report-shell {
+    background: #fff;
+    border: 1px solid rgba(0, 59, 142, 0.12);
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: 0 10px 24px rgba(18, 23, 34, 0.06);
+}
+
 .modal {
     position: fixed;
     inset: 0;
@@ -436,7 +448,7 @@ label {
 
 .admin-stats {
     display: grid;
-    grid-template-columns: repeat(2, minmax(190px, 280px));
+    grid-template-columns: repeat(auto-fit, minmax(190px, 280px));
     gap: 0.8rem;
     margin-bottom: 1rem;
 }
@@ -460,6 +472,10 @@ label {
     border-radius: 14px;
     padding: 0.8rem;
     overflow-x: auto;
+}
+
+.report-table-shell {
+    margin-top: 1rem;
 }
 
 .admin-table {

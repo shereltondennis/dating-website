@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Profile | Liberia Date</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="stylesheet/styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="wrapper nav-row">
+            <a href="index.html" class="brand">Liberia <span>Date</span></a>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="regis.html">Create Profile</a>
+                <a href="report.html">Report</a>
+                <a href="admin.html">Admin</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="report-section">
+        <div class="wrapper report-shell">
+            <div class="section-head">
+                <h1>Report Fake Profiles or Scammers</h1>
+                <p>Help keep Liberia Date safe by reporting suspicious accounts.</p>
+            </div>
+            <form id="reportForm" class="profile-form">
+                <div class="form-row two-col">
+                    <label>
+                        Profile ID (if known)
+                        <input type="text" id="reportProfileId" placeholder="e.g. seed-1">
+                    </label>
+                    <label>
+                        Reason
+                        <select id="reportReason" required>
+                            <option value="">Select reason</option>
+                            <option value="fake_profile">Fake profile</option>
+                            <option value="scammer">Scammer / fraud</option>
+                            <option value="impersonation">Impersonation</option>
+                            <option value="abusive_behavior">Abusive behavior</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="form-row two-col">
+                    <label>
+                        Your Name
+                        <input type="text" id="reporterName" required>
+                    </label>
+                    <label>
+                        Your Contact (Email/Phone)
+                        <input type="text" id="reporterContact" required>
+                    </label>
+                </div>
+                <label>
+                    Report Details
+                    <textarea id="reportDetails" rows="4" placeholder="Describe what happened and any proof (message screenshots, payment request, etc.)" required></textarea>
+                </label>
+                <button type="submit" class="btn btn-danger">Submit Report</button>
+                <p id="reportNotice" class="notice"></p>
+            </form>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="wrapper footer-grid">
+            <div class="footer-col">
+                <h4>Liberia Date Safety</h4>
+                <p>Your reports help us identify fake profiles, scams, and abusive behavior quickly.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Before You Report</h4>
+                <ul>
+                    <li>Provide the profile ID if possible</li>
+                    <li>Give factual details only</li>
+                    <li>Include message/payment request evidence</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <ul>
+                    <li>Email: safety@liberiadate.com</li>
+                    <li>WhatsApp: +231 88 000 0000</li>
+                    <li>Response time: 24-48 hours</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Follow Us</h4>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook">Facebook</a>
+                    <a href="#" aria-label="Instagram">Instagram</a>
+                    <a href="#" aria-label="TikTok">TikTok</a>
+                    <a href="#" aria-label="X">X</a>
+                    <a href="#" aria-label="YouTube">YouTube</a>
+                </div>
+            </div>
+        </div>
+        <div class="wrapper footer-row">
+            <p>False reporting may result in account restrictions.</p>
+            <p id="yearText"></p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

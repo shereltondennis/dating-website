@@ -16,6 +16,7 @@
             <nav class="nav-links">
                 <a href="index.html">Home</a>
                 <a href="regis.html">Create Profile</a>
+                <a href="report.html">Report</a>
                 <a href="admin.html">Admin</a>
             </nav>
         </div>
@@ -78,6 +79,21 @@
                     <label>
                         WhatsApp Number
                         <input type="tel" id="whatsapp" placeholder="+231 88 000 0000" required>
+                    </label>
+                </div>
+
+                <div class="form-row two-col">
+                    <label>
+                        Do You Have Children?
+                        <select id="hasChildren" required>
+                            <option value="">Select...</option>
+                            <option value="no">No</option>
+                            <option value="yes">Yes</option>
+                        </select>
+                    </label>
+                    <label>
+                        Children Details
+                        <input type="text" id="childrenDetails" placeholder="Example: 2 children (ages 5 and 8)" disabled>
                     </label>
                 </div>
 

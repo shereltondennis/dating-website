@@ -1,7 +1,8 @@
 const STORAGE_KEYS = {
     pending: "liberiaDatePendingProfiles",
     approved: "liberiaDateApprovedProfiles",
-    unlockedContacts: "liberiaDateUnlockedContacts"
+    unlockedContacts: "liberiaDateUnlockedContacts",
+    reports: "liberiaDateSafetyReports"
 };
 
 const FALLBACK_PHOTO = "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=600&q=80";
@@ -26,6 +27,8 @@ const seedProfiles = [
         bio: "Faith-driven and family-oriented. I enjoy gospel music, beach walks, and meaningful conversations.",
         phone: "+231 77 321 1001",
         whatsapp: "+231 88 321 1001",
+        hasChildren: "no",
+        childrenDetails: "",
         cardPhoto: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=600&q=80",
         fullBodyPhoto1: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80",
         fullBodyPhoto2: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80",
@@ -43,6 +46,8 @@ const seedProfiles = [
         bio: "Calm, ambitious, and ready to build a committed relationship with someone kind and honest.",
         phone: "+231 88 212 9921",
         whatsapp: "+231 77 212 9921",
+        hasChildren: "yes",
+        childrenDetails: "1 child (age 6)",
         cardPhoto: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80",
         fullBodyPhoto1: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
         fullBodyPhoto2: "https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=800&q=80",
@@ -60,6 +65,8 @@ const seedProfiles = [
         bio: "I value loyalty and growth. I run a small fashion shop and love traveling around Liberia.",
         phone: "+231 77 610 4420",
         whatsapp: "+231 88 610 4420",
+        hasChildren: "yes",
+        childrenDetails: "2 children (ages 5 and 8)",
         cardPhoto: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80",
         fullBodyPhoto1: "https://images.unsplash.com/photo-1542206395-9feb3edaa68d?auto=format&fit=crop&w=800&q=80",
         fullBodyPhoto2: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=800&q=80",
@@ -85,6 +92,12 @@ function getWhatsapp(profile) {
 
 function getIntroVideo(profile) {
     return profile.introVideo || "";
+}
+
+function getChildrenSummary(profile) {
+    const hasChildren = profile.hasChildren === "yes";
+    if (!hasChildren) return "No children";
+    return profile.childrenDetails ? `Has children: ${profile.childrenDetails}` : "Has children";
 }
 
 function getProfiles(key) {
@@ -353,6 +366,55 @@ function showGlobalNotice(message, isError = false) {
     notice.classList.toggle("notice-error", isError);
 }
 
+function setupReportForm() {
+    const form = document.getElementById("reportForm");
+    if (!form) return;
+    const profileInput = document.getElementById("reportProfileId");
+    const params = new URLSearchParams(window.location.search);
+    const profileIdFromUrl = params.get("profile_id");
+    if (profileInput && profileIdFromUrl) {
+        profileInput.value = profileIdFromUrl;
+    }
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const notice = document.getElementById("reportNotice");
+
+        const report = {
+            id: `report-${Date.now()}`,
+            createdAt: new Date().toISOString(),
+            profileId: document.getElementById("reportProfileId").value.trim() || "unknown",
+            reason: document.getElementById("reportReason").value,
+            reporterName: document.getElementById("reporterName").value.trim(),
+            reporterContact: document.getElementById("reporterContact").value.trim(),
+            details: document.getElementById("reportDetails").value.trim(),
+            status: "open"
+        };
+
+        const reports = getProfiles(STORAGE_KEYS.reports);
+        reports.unshift(report);
+        setProfiles(STORAGE_KEYS.reports, reports);
+
+        form.reset();
+        if (notice) {
+            notice.textContent = "Report submitted. Thank you for helping keep the platform safe.";
+        }
+    });
+}
+
+function bindReportProfileButton() {
+    const button = document.getElementById("reportProfileBtn");
+    if (!button) return;
+
+    button.addEventListener("click", () => {
+        const target = currentModalProfileId
+            ? `report.html?profile_id=${encodeURIComponent(currentModalProfileId)}`
+            : "report.html";
+        closeProfileModal();
+        window.location.href = target;
+    });
+}
+
 function clearPaymentQueryParams() {
     const url = new URL(window.location.href);
     url.searchParams.delete("session_id");
@@ -467,6 +529,7 @@ function openProfileModal(profileId) {
     document.getElementById("modalName").textContent = `${profile.name}, ${profile.age}`;
     document.getElementById("modalMeta").textContent = `${profile.occupation} - ${profile.city} - Looking for ${profile.lookingFor}`;
     document.getElementById("modalBio").textContent = profile.bio;
+    document.getElementById("modalChildren").textContent = getChildrenSummary(profile);
     document.getElementById("modalFullBody1").src = fullBody1;
     document.getElementById("modalFullBody1").alt = `${profile.name} full body photo 1`;
     document.getElementById("modalFullBody2").src = fullBody2;
@@ -577,12 +640,33 @@ function bindModalEvents() {
     if (unlockButton) {
         unlockButton.addEventListener("click", handleUnlockPayment);
     }
+
+    bindReportProfileButton();
+}
+
+function setupChildrenFields(form) {
+    const hasChildrenSelect = form.querySelector("#hasChildren");
+    const childrenDetailsInput = form.querySelector("#childrenDetails");
+    if (!hasChildrenSelect || !childrenDetailsInput) return;
+
+    const syncChildrenFields = () => {
+        const hasChildren = hasChildrenSelect.value === "yes";
+        childrenDetailsInput.disabled = !hasChildren;
+        childrenDetailsInput.required = hasChildren;
+        if (!hasChildren) {
+            childrenDetailsInput.value = "";
+        }
+    };
+
+    hasChildrenSelect.addEventListener("change", syncChildrenFields);
+    syncChildrenFields();
 }
 
 function setupRegistrationForm() {
     const form = document.getElementById("registrationForm");
     if (!form) return;
     setupIntroVideoRecorder(form);
+    setupChildrenFields(form);
 
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -604,6 +688,8 @@ function setupRegistrationForm() {
                 bio: document.getElementById("bio").value.trim(),
                 phone: document.getElementById("phone").value.trim(),
                 whatsapp: document.getElementById("whatsapp").value.trim(),
+                hasChildren: document.getElementById("hasChildren").value,
+                childrenDetails: document.getElementById("childrenDetails").value.trim(),
                 cardPhoto: uploadedMedia.cardPhoto || FALLBACK_PHOTO,
                 fullBodyPhoto1: uploadedMedia.fullBodyPhoto1 || FALLBACK_PHOTO,
                 fullBodyPhoto2: uploadedMedia.fullBodyPhoto2 || FALLBACK_PHOTO,
@@ -636,8 +722,10 @@ function renderAdminTable() {
     const pending = getProfiles(STORAGE_KEYS.pending);
     const approved = getProfiles(STORAGE_KEYS.approved);
 
-    document.getElementById("pendingCount").textContent = String(pending.length);
-    document.getElementById("approvedCount").textContent = String(approved.length);
+    const pendingCount = document.getElementById("pendingCount");
+    const approvedCount = document.getElementById("approvedCount");
+    if (pendingCount) pendingCount.textContent = String(pending.length);
+    if (approvedCount) approvedCount.textContent = String(approved.length);
 
     const empty = document.getElementById("emptyPending");
     if (pending.length === 0) {
@@ -655,6 +743,7 @@ function renderAdminTable() {
             <td>${profile.age}</td>
             <td>${profile.city}</td>
             <td>${profile.lookingFor}</td>
+            <td>${getChildrenSummary(profile)}</td>
             <td>${profile.phone}</td>
             <td>${getWhatsapp(profile) || "-"}</td>
             <td>
@@ -671,6 +760,64 @@ function renderAdminTable() {
     tableBody.querySelectorAll("[data-delete-id]").forEach((button) => {
         button.addEventListener("click", () => deletePendingProfile(button.dataset.deleteId));
     });
+}
+
+function renderAdminReports() {
+    const reportTable = document.getElementById("adminReportTable");
+    if (!reportTable) return;
+
+    const reports = getProfiles(STORAGE_KEYS.reports);
+    const openCount = reports.filter((entry) => entry.status !== "resolved").length;
+    const openNode = document.getElementById("openReportsCount");
+    if (openNode) openNode.textContent = String(openCount);
+
+    const empty = document.getElementById("emptyReports");
+    if (reports.length === 0) {
+        reportTable.innerHTML = "";
+        if (empty) empty.textContent = "No reports submitted yet.";
+        return;
+    }
+    if (empty) empty.textContent = "";
+
+    reportTable.innerHTML = reports.map((report) => `
+        <tr>
+            <td>${new Date(report.createdAt).toLocaleDateString()}</td>
+            <td>${report.profileId}</td>
+            <td>${report.reason}</td>
+            <td>${report.reporterName}</td>
+            <td>${report.reporterContact}</td>
+            <td>${report.details}</td>
+            <td>${report.status}</td>
+            <td>
+                <button class="btn btn-primary btn-sm" data-resolve-report-id="${report.id}">Resolve</button>
+                <button class="btn btn-danger btn-sm" data-delete-report-id="${report.id}">Delete</button>
+            </td>
+        </tr>
+    `).join("");
+
+    reportTable.querySelectorAll("[data-resolve-report-id]").forEach((button) => {
+        button.addEventListener("click", () => resolveReport(button.dataset.resolveReportId));
+    });
+
+    reportTable.querySelectorAll("[data-delete-report-id]").forEach((button) => {
+        button.addEventListener("click", () => deleteReport(button.dataset.deleteReportId));
+    });
+}
+
+function resolveReport(reportId) {
+    const reports = getProfiles(STORAGE_KEYS.reports);
+    const updated = reports.map((entry) => (
+        entry.id === reportId ? { ...entry, status: "resolved" } : entry
+    ));
+    setProfiles(STORAGE_KEYS.reports, updated);
+    renderAdminReports();
+}
+
+function deleteReport(reportId) {
+    const reports = getProfiles(STORAGE_KEYS.reports);
+    const updated = reports.filter((entry) => entry.id !== reportId);
+    setProfiles(STORAGE_KEYS.reports, updated);
+    renderAdminReports();
 }
 
 function approvePendingProfile(profileId) {
@@ -720,7 +867,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     setYearText();
     bindHomeFilters();
     bindModalEvents();
+    setupReportForm();
     renderHomeProfiles();
     setupRegistrationForm();
     renderAdminTable();
+    renderAdminReports();
 });

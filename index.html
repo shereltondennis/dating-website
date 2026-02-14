@@ -16,6 +16,7 @@
             <nav class="nav-links">
                 <a href="index.html">Home</a>
                 <a href="regis.html">Create Profile</a>
+                <a href="report.html">Report</a>
                 <a href="admin.html">Admin</a>
             </nav>
         </div>
@@ -71,6 +72,7 @@
                 <p>Meet in public places, verify identity on a call first, and report suspicious behavior to admins immediately.</p>
             </div>
         </section>
+
     </main>
 
     <div class="modal" id="profileModal" aria-hidden="true">
@@ -80,6 +82,7 @@
             <h3 id="modalName"></h3>
             <p id="modalMeta" class="modal-meta"></p>
             <p id="modalBio"></p>
+            <p id="modalChildren" class="modal-meta"></p>
             <div class="full-body-gallery" id="fullBodyGallery">
                 <img id="modalFullBody1" src="" alt="Full body photo 1">
                 <img id="modalFullBody2" src="" alt="Full body photo 2">
@@ -93,6 +96,7 @@
                 <button class="btn btn-primary" id="unlockContactBtn" type="button">Pay USD 3.00 to Unlock Contact</button>
                 <p class="payment-note">Secure checkout powered by Stripe.</p>
             </div>
+            <button class="btn btn-danger btn-sm" id="reportProfileBtn" type="button">Report This Profile</button>
             <p id="modalPhone" class="modal-phone is-hidden"></p>
             <p id="modalWhatsapp" class="modal-phone is-hidden"></p>
         </div>
